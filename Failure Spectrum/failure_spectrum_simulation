@@ -1,0 +1,132 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from pymatching import Matching
+from tqdm import tqdm
+
+# ==================================================
+# 1. Rotated Toric Code (Z noise only)
+# ==================================================
+
+def build_rotated_toric(d):
+
+    N = d * d
+    checks = []
+
+    def q(x, y):
+        return (x % d) * d + (y % d)
+
+    for x in range(d):
+        for y in range(d):
+            if (x + y) % 2 == 0:
+                check = np.zeros(N, dtype=np.uint8)
+                check[q(x, y)] = 1
+                check[q(x+1, y)] = 1
+                check[q(x, y+1)] = 1
+                check[q(x+1, y+1)] = 1
+                checks.append(check)
+
+    H = np.array(checks) % 2
+    matching = Matching(H)
+
+    # Logical Z loops
+    logicals = []
+
+    loop1 = np.zeros(N, dtype=np.uint8)
+    for x in range(d):
+        loop1[q(x, 0)] = 1
+    logicals.append(loop1)
+
+    loop2 = np.zeros(N, dtype=np.uint8)
+    for y in range(d):
+        loop2[q(0, y)] = 1
+    logicals.append(loop2)
+
+    A = np.array(logicals) % 2
+
+    return H, A, matching
+
+
+# ==================================================
+# 2. Failure Test (optimized)
+# ==================================================
+
+def fails(e, H, A, matching):
+
+    syndrome = H @ e % 2
+    correction = matching.decode(syndrome)
+
+    return not np.array_equal(A @ correction % 2,
+                              A @ e % 2)
+
+
+# ==================================================
+# 3. High-Resolution Failure Spectrum
+# ==================================================
+
+def estimate_failure_spectrum(d,
+                              max_w=100,
+                              base_trials=20000):
+
+    H, A, matching = build_rotated_toric(d)
+    N = H.shape[1]
+
+    max_w = min(max_w, N)
+
+    weights = []
+    fvals = []
+
+    for w in tqdm(range(1, max_w + 1), desc=f"d={d}"):
+
+        # Increase sampling near onset w ≈ d/2
+        if w < d:
+            trials = base_trials
+        elif w < 2*d:
+            trials = base_trials // 2
+        else:
+            trials = base_trials // 10
+
+        failures = 0
+
+        for _ in range(trials):
+            e = np.zeros(N, dtype=np.uint8)
+            idx = np.random.choice(N, w, replace=False)
+            e[idx] = 1
+
+            if fails(e, H, A, matching):
+                failures += 1
+
+        f = failures / trials
+
+        weights.append(w)
+        fvals.append(f)
+
+        # Stop if saturated
+        if f > 0.74:
+            break
+
+    return np.array(weights), np.array(fvals)
+
+
+# ==================================================
+# 4. Plot (Paper Style)
+# ==================================================
+
+plt.figure(figsize=(7,6))
+
+for d in [6, 12, 18]:
+
+    weights, fvals = estimate_failure_spectrum(
+        d=d,
+        max_w=100,
+        base_trials=20000
+    )
+
+    plt.loglog(weights, fvals, 'o-', label=f"RT({d})")
+
+plt.xlabel("fault weight w", fontsize=12)
+plt.ylabel("failure spectrum f(w)", fontsize=12)
+plt.title("RT(d)-bitflip Failure Spectrum", fontsize=13)
+plt.grid(True, which="both", alpha=0.3)
+plt.legend()
+plt.tight_layout()
+plt.show()
