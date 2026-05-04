@@ -1,6 +1,6 @@
 # Low-Error-Sampling
 
-Open Source implementation of the Low Error Regime logical error rate estimation techniques for QEC systems as described by the paper 'Fail fast: techniques to probe rare events in quantum error correction' by Beverland et al (https://arxiv.org/abs/2511.15177)
+Open Source implementation of the Low Error Regime logical error rate estimation techniques for QEC systems as described by the paper 'Fail fast: techniques to probe rare events in quantum error correction' by Beverland et al (https://arxiv.org/abs/2511.15177). Explanation of our work found in Final_Project_Writeup.pdf.
 
 ## Installation
 
