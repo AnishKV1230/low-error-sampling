@@ -1,3 +1,6 @@
+# This code simulates the failure spectrum of the rotated toric code under Z noise. 
+# It estimates the failure probability f(w) for different fault weights w, and plots the results on a log-log scale.
+# The code is structured into four main sections: building the code, testing for failures, estimating the failure spectrum, and plotting the results.
 import numpy as np
 import matplotlib.pyplot as plt
 from pymatching import Matching

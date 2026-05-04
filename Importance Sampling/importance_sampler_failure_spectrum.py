@@ -1,5 +1,6 @@
 
-##failure spectrum vs failure weight
+# Estimates failure spectrum vs failure weight using importance sampling.
+# This method is more efficient than direct Monte Carlo sampling for higher weights, as it biases the sampling towards more likely failure events and applies appropriate reweighting to get unbiased estimates.
 import numpy as np
 import stim
 import pymatching

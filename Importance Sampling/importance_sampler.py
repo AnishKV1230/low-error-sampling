@@ -1,4 +1,4 @@
-##Logical vs Phsyical Error Rate
+##Estimates Logical vs Phsyical Error Rate using importance sampling
 import numpy as np
 import stim
 import pymatching

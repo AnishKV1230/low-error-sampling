@@ -1,5 +1,7 @@
 
-##failure spectrum vs failure weight
+# Creates failure spectrum vs failure weight using monte carlo sampling. 
+# This is the most direct way to get the failure spectrum, but it is limited to moderate weights due to the exponential growth of the number of faults. 
+# For higher weights, importance sampling or other techniques may be needed to get accurate estimates.
 import numpy as np
 import stim
 import pymatching

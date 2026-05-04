@@ -1,4 +1,7 @@
-# failure_spectrum.py
+# This code implements the failure spectrum estimation as a method that calls upon STIM objects and ansatz fitting for a given decoder-bench trace. 
+# It loads the check matrix, observable matrix, and priors from the trace, then samples random fault vectors of fixed weight to estimate the failure probability f(w) for each weight w. 
+# It fits a 5-parameter ansatz to the measured spectrum points, and uses this fit to reconstruct the logical error rate P(q) as a function of physical error rate q. 
+# Finally, it plots the results in a format similar to Figure 2 of the Fail Fast paper, including both the spectrum and the P(q) curve with Monte Carlo points overlaid.
 import h5py
 import numpy as np
 from pathlib import Path
